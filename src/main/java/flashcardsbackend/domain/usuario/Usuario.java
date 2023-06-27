@@ -22,6 +22,19 @@ public class Usuario {
     private UUID id;
     private String username;
     private String password;
-    private boolean isEnabled;
+
+    @Column(name = "enabled")
+    private Boolean enabled;
+
+    Usuario(String username,String password){
+        this.username =username;
+        this.password = password;
+    }
+
+    Usuario(String username,String password, Boolean enabled){
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+    }
 
 }
