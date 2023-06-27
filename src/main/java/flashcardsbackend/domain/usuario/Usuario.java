@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.UUID;
 
 
 @Entity(name="Usuario")
@@ -13,8 +16,10 @@ import lombok.EqualsAndHashCode;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(columnDefinition = "uuid", updatable = false)
+    private UUID id;
     private String username;
     private String password;
     private boolean isEnabled;
