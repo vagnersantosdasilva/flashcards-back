@@ -26,6 +26,8 @@ public class Usuario {
     @Column(name = "enabled")
     private Boolean enabled;
 
+    Usuario(){}
+
     Usuario(String username,String password){
         this.username =username;
         this.password = password;

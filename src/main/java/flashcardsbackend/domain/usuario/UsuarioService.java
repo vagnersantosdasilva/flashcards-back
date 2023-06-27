@@ -5,6 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 public class UsuarioService {
 
@@ -21,5 +23,10 @@ public class UsuarioService {
         Usuario response = usuarioRepository.save(usuario);
         System.out.println("Senha gerada : "+response.getPassword());
         return new DadosUsuarioResponseDTO(response);
+    }
+
+    public DadosUsuarioResponseDTO findUsuarioById(UUID id){
+        Usuario usuario = usuarioRepository.findById(id).get();
+        return new DadosUsuarioResponseDTO(usuario);
     }
 }

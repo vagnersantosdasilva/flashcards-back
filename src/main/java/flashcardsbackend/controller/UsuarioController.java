@@ -6,11 +6,10 @@ import flashcardsbackend.domain.usuario.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
@@ -24,4 +23,11 @@ public class UsuarioController {
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(dadosResponse.id()).toUri();
         return ResponseEntity.created(uri).body(dadosResponse);
     }
+
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity obterUmUsuario(@PathVariable UUID id){
+        DadosUsuarioResponseDTO dadosResponse = usuarioService.findUsuarioById(id);
+        return ResponseEntity.ok(dadosResponse);
+    }
+
 }
