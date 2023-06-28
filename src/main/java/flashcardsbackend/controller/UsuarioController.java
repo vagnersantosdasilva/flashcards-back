@@ -7,6 +7,9 @@ import flashcardsbackend.domain.usuario.UsuarioService;
 import flashcardsbackend.infra.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,7 +54,7 @@ public class UsuarioController {
     }
 
     //TODO: Provisoriamente até implementar token jwt
-    @PostMapping("registrar")
+    @PostMapping("/public/registrar")
     public ResponseEntity registro(@RequestBody @Valid DadosUsuarioDTO dados){
         DadosUsuarioResponseDTO dadosResponse = usuarioService.validarCriacao(dados);
         return ResponseEntity.ok(dadosResponse);
@@ -61,7 +65,10 @@ public class UsuarioController {
         DadosUsuarioResponseDTO dadosResponse = usuarioService.findUsuarioById(id);
         return ResponseEntity.ok(dadosResponse);
     }
-
-
+    @GetMapping("/usuario")
+    public ResponseEntity<Page<DadosUsuarioResponseDTO>> obterListaUsuario(@PageableDefault(size=10,sort={"username"}) Pageable paginacao){
+        Page<DadosUsuarioResponseDTO> dadosResponse = usuarioService.findAll(paginacao);
+        return ResponseEntity.ok(dadosResponse);
+    }
 
 }

@@ -1,10 +1,13 @@
 package flashcardsbackend.domain.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,5 +42,9 @@ public class UsuarioService {
             return new DadosUsuarioResponseDTO(usuarioOpt.get());
         }
         throw new RuntimeException("Usuario não cadastrado");
+    }
+
+    public Page<DadosUsuarioResponseDTO> findAll(Pageable paginacao) {
+        return usuarioRepository.findAll(paginacao).map(e->new DadosUsuarioResponseDTO(e));
     }
 }
