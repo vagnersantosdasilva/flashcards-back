@@ -4,6 +4,7 @@ import flashcardsbackend.domain.usuario.DadosUsuarioDTO;
 import flashcardsbackend.domain.usuario.DadosUsuarioResponseDTO;
 import flashcardsbackend.domain.usuario.Usuario;
 import flashcardsbackend.domain.usuario.UsuarioService;
+import flashcardsbackend.infra.security.DadosTokenResponse;
 import flashcardsbackend.infra.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class UsuarioController {
         DadosUsuarioResponseDTO dadosResponse =null;
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.username(),dados.password());
         var authentication = manager.authenticate(authenticationToken);
-        var tokenJWT = tokenService.gerarToken((Usuario) authentication.getPrincipal());
+        var tokenJWT = "Bearer "+tokenService.gerarToken((Usuario) authentication.getPrincipal());
 
-        return ResponseEntity.ok(tokenJWT);
+        return ResponseEntity.ok(new DadosTokenResponse(tokenJWT));
     }
 
     //TODO: Provisoriamente até implementar token jwt
