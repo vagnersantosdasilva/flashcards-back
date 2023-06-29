@@ -1,10 +1,13 @@
 package flashcardsbackend.domain.usuario;
 
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioDTO;
+import flashcardsbackend.domain.usuario.dto.DadosUsuarioLoginDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResetPasswordDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResponseDTO;
 import flashcardsbackend.infra.email.Constants;
 import flashcardsbackend.infra.email.EmailService;
+import flashcardsbackend.infra.exceptions.DuplicateUser;
+import flashcardsbackend.infra.exceptions.UserNotFound;
+import flashcardsbackend.infra.exceptions.ValidPasswordException;
 import flashcardsbackend.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -32,9 +36,9 @@ public class UsuarioService {
     TokenService tokenService;
 
     @Transactional
-    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioDTO dados){
+    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioLoginDTO dados){
         Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(dados.username());
-        if(usuarioOptional.isPresent()) throw new RuntimeException("Usuario já cadastrado");
+        if(usuarioOptional.isPresent()) throw new DuplicateUser("Usuario já cadastrado!");
         Usuario usuario = new Usuario(dados.username(), encoder.encode(dados.password()));
         usuario.setEnabled(false);
         Usuario response = usuarioRepository.save(usuario);
@@ -59,7 +63,7 @@ public class UsuarioService {
             usuarioOpt.get().setEnabled(true);
             return new DadosUsuarioResponseDTO(usuarioOpt.get());
         }
-        throw new RuntimeException("Usuario não encontrado");
+        else throw new UserNotFound("Usuario não encontrado");
     }
 
     public Page<DadosUsuarioResponseDTO> findAll(Pageable paginacao) {
@@ -72,11 +76,11 @@ public class UsuarioService {
             var token = tokenService.gerarToken(user.get());
             emailService.sendConfirmationHtmlEmail(user.get(),token, Constants.EMAIL_CONFIRMACAO_RESET_PASSWORD);
         }
-        else throw new RuntimeException("Usuário não encontrado!");
+        else throw new UserNotFound("Usuário não encontrado!");
     }
     @Transactional
-    public void resetPassword(DadosUsuarioResetPasswordDTO dadosDTO) throws RuntimeException{
-        if (!dadosDTO.isPasswordsEquals()) throw new RuntimeException("Campo password e confirmPassword devem ser iguais");
+    public void resetPassword(DadosUsuarioResetPasswordDTO dadosDTO) {
+        if (!dadosDTO.isPasswordsEquals()) throw new ValidPasswordException("Campo password e confirmPassword devem ser iguais");
         Optional<Usuario> user = usuarioRepository.findByUsername(dadosDTO.username());
         if (user.isPresent()){
             Usuario usuario = user.get();
@@ -84,6 +88,6 @@ public class UsuarioService {
             usuario.setPassword(encoder.encode(dadosDTO.password()));
             usuario.setEnabled(true);
         }
-        else throw new RuntimeException("Usuario não encontrado");
+        else throw new UserNotFound("Usuário não encontrado!");
     }
 }
