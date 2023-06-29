@@ -15,6 +15,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
 
@@ -40,12 +43,12 @@ public abstract class AbstractEmailService implements EmailService {
         try {
             MimeMessage mimeMessage = prepareMimeMessageFromUser(user, vToken,confirmacao);
             sendHtmlEmail(mimeMessage);
-        } catch (MessagingException msg) {
+        } catch (MessagingException | UnsupportedEncodingException msg) {
             throw new RuntimeException("Objeto não encontrado");
         }
     }
 
-    protected MimeMessage prepareMimeMessageFromUser(Usuario user, String vToken, Integer confirmacao) throws MessagingException {
+    protected MimeMessage prepareMimeMessageFromUser(Usuario user, String vToken, Integer confirmacao) throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
         mimeMessageHelper.setTo(user.getUsername());
@@ -56,10 +59,10 @@ public abstract class AbstractEmailService implements EmailService {
         return mimeMessage;
     }
 
-    protected String htmlFromTemplateUser(Usuario user, String vToken,Integer confirmacao){
-
-        String confirmationUrl = this.contextPath + "/public/regitrationConfirm/users?token="+vToken;
-        String resetUrl = this.frontend+"/reset?token="+vToken;
+    protected String htmlFromTemplateUser(Usuario user, String vToken,Integer confirmacao) throws UnsupportedEncodingException {
+        String encodedToken = URLEncoder.encode(vToken, StandardCharsets.UTF_8.toString());
+        String confirmationUrl = this.contextPath + "/api/public/usuario?token="+encodedToken;
+        String resetUrl = this.frontend+"/reset?token="+encodedToken;
         Context context = new Context();
         context.setVariable("user", user);
         if (confirmacao.equals(Constants.EMAIL_CONFIRMACAO_CADASTRO_USUARIO)){

@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.usuario;
+package flashcardsbackend.domain.usuario.dto;
 
 
 import jakarta.validation.constraints.Email;

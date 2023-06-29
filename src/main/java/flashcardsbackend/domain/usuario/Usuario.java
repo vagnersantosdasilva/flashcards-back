@@ -1,5 +1,6 @@
 package flashcardsbackend.domain.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.Data;
@@ -25,7 +26,10 @@ public class Usuario implements UserDetails {
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
+
     private String username;
+
+    @JsonIgnore
     private String password;
 
     @Column(name = "enabled")
