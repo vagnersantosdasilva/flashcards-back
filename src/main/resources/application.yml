@@ -9,8 +9,45 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  mail:
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: smtp.gmail.com
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+        ssl:
+          enable: true
+      socketFactory:
+        port: 465
+        class: javax.net.ssl.SSLSocketFactory
+      fallback: false
+    host: smtp.gmail.com
+    username: vagnersantosdasilva@gmail.com
+    password: ${SMTP_SECRET}
+    port: 465
+    protocol: smtps
+
+
+
+default:
+  sender: vagnersantosdasilva@gmail.com
+  recipient: vagnersantosdasilva@gmail.com
+  url: http://localhost:8082
+
+
+frontend:
+  uri: http://localhost:8080
+
+
+
 api:
   security:
     token:
       secret: ${JWT_SECRET}
       issuer: VSS Flashcards
+

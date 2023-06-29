@@ -34,9 +34,6 @@ public class UsuarioController {
     @Autowired
     TokenService tokenService;
 
-    @Autowired
-    PasswordEncoder encoder;
-
     @PostMapping("public/usuario")
     public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioDTO dados , UriComponentsBuilder uriBuilder){
         DadosUsuarioResponseDTO dadosResponse = usuarioService.criarUsuario(dados);

@@ -1,5 +1,8 @@
 package flashcardsbackend.domain.usuario;
 
+import flashcardsbackend.infra.email.Constants;
+import flashcardsbackend.infra.email.EmailService;
+import flashcardsbackend.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,12 +22,22 @@ public class UsuarioService {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    TokenService tokenService;
+
     @Transactional
     public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioDTO dados){
         Usuario usuario = new Usuario(dados.username(), encoder.encode(dados.password()));
-        usuario.setEnabled(false);
+        usuario.setEnabled(true);
         Usuario response = usuarioRepository.save(usuario);
         System.out.println("Senha gerada : "+response.getPassword());
+        //TODO: Chamar serviço de entrega de email
+        var token = tokenService.gerarToken(usuario);
+        emailService.sendConfirmationHtmlEmail(usuario,token, Constants.EMAIL_CONFIRMACAO_CADASTRO_USUARIO);
+
         return new DadosUsuarioResponseDTO(response);
     }
 
