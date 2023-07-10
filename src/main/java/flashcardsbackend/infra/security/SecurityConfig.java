@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/api/public/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
+                .requestMatchers("/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(corsFilter(), SecurityFilter.class)
