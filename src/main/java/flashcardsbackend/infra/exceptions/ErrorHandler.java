@@ -41,7 +41,13 @@ public class ErrorHandler {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity tratarErroLoginSenha(AuthenticationException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new DadosErroValidacao("login","Credenciais inválidas. Verifique seu login e senha."));
+                .body(new DadosErros("Credenciais inválidas. Verifique seu login e senha."));
+    }
+
+    @ExceptionHandler(ResourceNotFound.class)
+    public ResponseEntity recursoNaoEncontrado(ResourceNotFound ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new DadosErros(ex.getMessage()));
     }
 
     private record DadosErroValidacao(String campo, String mensagem) {
@@ -49,5 +55,7 @@ public class ErrorHandler {
             this(erro.getField(), erro.getDefaultMessage());
         }
     }
+
+    private record DadosErros(String mensagem){}
 
 }

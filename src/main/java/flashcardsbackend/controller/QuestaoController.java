@@ -1,6 +1,7 @@
 package flashcardsbackend.controller;
 
 import flashcardsbackend.domain.questao.DadosQuestao;
+import flashcardsbackend.domain.questao.DadosQuestaoResposta;
 import flashcardsbackend.domain.questao.DadosQuestaoUpdate;
 import flashcardsbackend.domain.questao.QuestaoService;
 import jakarta.validation.Valid;
@@ -41,6 +42,16 @@ public class QuestaoController {
 
         DadosQuestao questaoResponse =  service.atualizar(dto,idUsuario);
         return ResponseEntity.ok().body(questaoResponse);
+    }
+
+    @PutMapping("usuario/{idUsuario}/questao/responder")
+    @PreAuthorize("#dto.usuarioId.toString().equals(authentication.principal.get().id.toString())")
+    public ResponseEntity responderQuestao(
+            @PathVariable("idUsuario") UUID idUsuario,
+            @RequestBody @Valid DadosQuestaoResposta dto){
+
+        service.responderPergunta(dto,idUsuario);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("usuario/{idUsuario}/categoria/{idCategoria}/questao/{idQuestao}")

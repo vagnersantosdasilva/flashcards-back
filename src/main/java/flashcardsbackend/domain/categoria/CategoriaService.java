@@ -2,6 +2,8 @@ package flashcardsbackend.domain.categoria;
 
 import flashcardsbackend.domain.usuario.Usuario;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
+import flashcardsbackend.infra.exceptions.ResourceNotFound;
+import flashcardsbackend.infra.exceptions.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,7 @@ public class CategoriaService {
              return dadosResponse;
         }
         else{
-            throw new RuntimeException("Usuário não informado!");
+            throw new UserNotFound("Usuário não informado!");
         }
 
     }
@@ -41,7 +43,7 @@ public class CategoriaService {
     @Transactional
     public DadosCategoria atualizar(DadosCategoria dto) {
         Optional<Usuario> userOpt = usuarioRepository.findById(dto.usuarioId());
-        if (dto.id()==null) throw new RuntimeException("Id de categoria é obrigatório");
+        if (dto.id()==null) throw new ResourceNotFound("Id de categoria é obrigatório");
         if (userOpt.isPresent()){
             Optional <Categoria> catOpt = categoriaRepository.findById(dto.id());
             if (catOpt.isPresent()){
@@ -51,9 +53,9 @@ public class CategoriaService {
                 categoria.setId(dto.id());
                 return new DadosCategoria(categoriaRepository.save(categoria));
             }
-            throw new RuntimeException("Categoria não encontrada");
+            throw new ResourceNotFound("Categoria não encontrada");
         }
-        throw new RuntimeException("Usuário não encontrado");
+        throw new UserNotFound("Usuário não encontrado");
     }
 
 
@@ -70,11 +72,11 @@ public class CategoriaService {
             System.out.println(categoriaOptional.get().getUsuario().getId());
             System.out.println(idUsuario);
             if (!idUsuario.equals(categoriaOptional.get().getUsuario().getId()))
-                throw new RuntimeException("Usuário não encontrado");
+                throw new ResourceNotFound("Usuário não encontrado");
             categoriaRepository.delete(categoriaOptional.get());
         }
         else{
-            throw new RuntimeException("Categoria não encontrada!");
+            throw new ResourceNotFound("Categoria não encontrada!");
         }
     }
 
@@ -83,6 +85,6 @@ public class CategoriaService {
         if (categoriaOptional.isPresent()){
             return new DadosCategoria(categoriaOptional.get());
         }
-        throw new RuntimeException("Categoria não encontrada!");
+        throw new ResourceNotFound("Categoria não encontrada!");
     }
 }

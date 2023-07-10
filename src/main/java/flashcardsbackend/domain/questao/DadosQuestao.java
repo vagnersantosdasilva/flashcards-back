@@ -17,7 +17,7 @@ public record DadosQuestao(
 
         Boolean acerto,
         @NotNull
-        UUID usuarioID
+        UUID usuarioId
 
         ) {
 
