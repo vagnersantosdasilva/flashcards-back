@@ -84,4 +84,19 @@ public class QuestaoController {
         service.remover(idQuestao,idCategoria,idUsuario);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("usuario/{idUsuario}/categoria/{idCategoria}/questao/countnew")
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    public ResponseEntity obterContagemNovasQuestoes(
+            @PathVariable("idCategoria") Long idCategoria ,
+            @PathVariable("idUsuario") UUID idUsuario){
+        return ResponseEntity.ok(service.obterContagemNovaQuestao(idCategoria, idUsuario));
+    }
+
+    @GetMapping("usuario/{idUsuario}/categoria/{idCategoria}/questao/revisao")
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    public ResponseEntity obterListaQuestaoRevisao(
+            @PathVariable("idCategoria") Long idCategoria ,
+            @PathVariable("idUsuario") UUID idUsuario){
+        return ResponseEntity.ok(service.obterQuestaoParaRevisao(idCategoria,idUsuario));
+    }
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +60,7 @@ public class QuestaoService {
         questao.setAcerto(dto.acerto());
         Etapa etapa = this.verificarEtapa(questao);
         questao.setEtapa(etapa);
+        questao.setDataCriacao(LocalDateTime.now());
         questaoRepository.save(questao);
     }
 
@@ -75,13 +78,55 @@ public class QuestaoService {
 
     }
 
+    public List<Questao> obterRevisaoPorCategoria(Long idCategoria){
+
+        return null;
+    }
+
+    private Boolean habilitadaParaRevisao(Questao questao){
+        LocalDateTime criacao = questao.getDataCriacao();
+        Long diasEtapa  = (long) questao.getEtapa().getDuracaoDias();
+        LocalDateTime proximaRevisao = criacao.plusDays(diasEtapa);
+
+        LocalDate dataRevisao = proximaRevisao.toLocalDate();
+        LocalDate.now();
+
+        if ((dataRevisao.isBefore(LocalDate.now()) || dataRevisao.equals(LocalDate.now()))) return true;
+        return false;
+    }
+
+    private Boolean novaQuestao(Questao questao){
+        if (questao.getEtapa().getDuracaoDias()<1) return true;
+        return false;
+    }
+
     public DadosQuestao obterQuestaoPorId( Long idQuestao,  Long idCategoria, UUID idUsuario) {
         Questao questao = questaoRepository.findByIdAndCategoriaIdAndCategoriaUsuarioId(idQuestao,idCategoria,idUsuario);
+
         if (questao!=null) return new DadosQuestao(questao);
         throw new ResourceNotFound("Questão não encontrada!");
     }
 
+   /* public List<DadosQuestao> obterNovasQuestoes(Long idCategoria,UUID idUsuario){
+        return questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)
+                .stream()
+                .filter(e->novaQuestao(e))
+                .map(e->new DadosQuestao(e)).collect(Collectors.toList());
+    }*/
+
+    public List<DadosQuestao> obterQuestaoParaRevisao(Long idCategoria, UUID idUsuario){
+        return  questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)
+                .stream()
+                .filter(e->habilitadaParaRevisao(e))
+                .map(e->new DadosQuestao(e)).collect(Collectors.toList());
+    }
+
     public List<DadosQuestao> obterQuestaoPorCategoria(Long idCategoria,UUID idUsuario){
+        //Teste de retorno
+        List<Questao> listaDados = questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario);
+        for(Questao d: listaDados){
+            System.out.println(d.getId()+" | nova questao:"+novaQuestao(d)+" | habilitada revisão:"+habilitadaParaRevisao(d)+" | Duracao dias: "+d.getEtapa().getDuracaoDias());
+        }
         return questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)
                 .stream()
                 .map(e->new DadosQuestao(e)).collect(Collectors.toList());
@@ -100,4 +145,9 @@ public class QuestaoService {
         if (questao==null) throw new ResourceNotFound("Questão não encontrada!");
         questaoRepository.delete(questao);
     }
+
+    public DadosContagem obterContagemNovaQuestao(Long idCategoria, UUID idUsuario){
+        return new DadosContagem(questaoRepository.countByEtapa0AndCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario));
+    }
+
 }
