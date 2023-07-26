@@ -1,5 +1,6 @@
 package flashcardsbackend.controller;
 
+import flashcardsbackend.domain.usuario.dto.DadosUsuarioCriacao;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioLoginDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResetPasswordDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResponseDTO;
@@ -38,7 +39,7 @@ public class UsuarioController {
     private String frontendUri;
 
     @PostMapping("public/usuario")
-    public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioLoginDTO dados , UriComponentsBuilder uriBuilder){
+    public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioCriacao dados , UriComponentsBuilder uriBuilder){
         DadosUsuarioResponseDTO dadosResponse = usuarioService.criarUsuario(dados);
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(dadosResponse.id()).toUri();
         return ResponseEntity.created(uri).body(dadosResponse);

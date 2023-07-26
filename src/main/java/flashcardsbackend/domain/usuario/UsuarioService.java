@@ -1,5 +1,6 @@
 package flashcardsbackend.domain.usuario;
 
+import flashcardsbackend.domain.usuario.dto.DadosUsuarioCriacao;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioLoginDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResetPasswordDTO;
 import flashcardsbackend.domain.usuario.dto.DadosUsuarioResponseDTO;
@@ -36,14 +37,19 @@ public class UsuarioService {
     TokenService tokenService;
 
     @Transactional
-    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioLoginDTO dados){
+    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioCriacao dados){
         Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(dados.username());
-        if(usuarioOptional.isPresent()) throw new DuplicateUser("Usuario já cadastrado!");
+
+        if(usuarioOptional.isPresent()) throw new DuplicateUser("Usuário já cadastrado!");
+        if (!dados.password().equals(dados.confirmPassword())) throw new ValidPasswordException("Campos Password e confirmPassword devem ser iguais!");
+
         Usuario usuario = new Usuario(dados.username(), encoder.encode(dados.password()));
         usuario.setEnabled(false);
         Usuario response = usuarioRepository.save(usuario);
+
         System.out.println("Senha gerada : "+response.getPassword());
         //TODO: Chamar serviço de entrega de email
+
         var token = tokenService.gerarToken(usuario);
         emailService.sendConfirmationHtmlEmail(usuario,token, Constants.EMAIL_CONFIRMACAO_CADASTRO_USUARIO);
 

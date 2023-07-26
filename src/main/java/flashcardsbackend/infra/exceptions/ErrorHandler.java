@@ -50,12 +50,12 @@ public class ErrorHandler {
                 .body(new DadosErros(ex.getMessage()));
     }
 
-    private record DadosErroValidacao(String campo, String mensagem) {
+    private record DadosErroValidacao(String field, String message) {
         public DadosErroValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());
         }
     }
 
-    private record DadosErros(String mensagem){}
+    private record DadosErros(String message){}
 
 }
