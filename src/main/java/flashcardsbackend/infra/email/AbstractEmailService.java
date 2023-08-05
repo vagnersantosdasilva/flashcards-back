@@ -53,7 +53,7 @@ public abstract class AbstractEmailService implements EmailService {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
         mimeMessageHelper.setTo(user.getUsername());
         mimeMessageHelper.setFrom(this.sender);
-        mimeMessageHelper.setSubject("Confirmação de Registro");
+        mimeMessageHelper.setSubject("Simples Flashcards");
         mimeMessageHelper.setSentDate(new Date((System.currentTimeMillis())));
         mimeMessageHelper.setText(htmlFromTemplateUser(user,vToken,confirmacao), true);
         return mimeMessage;

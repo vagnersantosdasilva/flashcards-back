@@ -29,6 +29,12 @@ public class QuestaoService {
     UsuarioRepository usuarioRepository;
     @Transactional
     public DadosQuestao criar(DadosQuestao dto, UUID idUsuario){
+        try {
+            Thread.sleep(1000); // 2 segundos em milissegundos
+        } catch (InterruptedException e) {
+            // Tratamento de exceção, caso a thread seja interrompida enquanto dorme.
+            e.printStackTrace();
+        }
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Questao questao = new Questao();
         questao.setAcerto(dto.acerto());
@@ -41,6 +47,12 @@ public class QuestaoService {
     }
 
     public DadosQuestao atualizar(DadosQuestaoUpdate dto, UUID idUsuario) {
+        try {
+            Thread.sleep(1000); // 2 segundos em milissegundos
+        } catch (InterruptedException e) {
+            // Tratamento de exceção, caso a thread seja interrompida enquanto dorme.
+            e.printStackTrace();
+        }
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Optional<Questao> questaoOpt =  questaoRepository.findById(dto.id());
         if (questaoOpt.isEmpty()) throw new ResourceNotFound("Questão não encontrada!");
@@ -49,6 +61,8 @@ public class QuestaoService {
         questao.setCategoria(categoria);
         questao.setPergunta(dto.pergunta());
         questao.setResposta(dto.resposta());
+        questao.setEtapa(Etapa.ETAPA0);
+        questao.setAcerto(null);
         return new DadosQuestao(questaoRepository.save(questao));
     }
 
@@ -96,7 +110,7 @@ public class QuestaoService {
     }
 
     private Boolean novaQuestao(Questao questao){
-        if (questao.getEtapa().getDuracaoDias()<1) return true;
+        if (questao.getEtapa() ==null || questao.getEtapa().getDuracaoDias()<1) return true;
         return false;
     }
 
@@ -122,10 +136,15 @@ public class QuestaoService {
     }
 
     public List<DadosQuestao> obterQuestaoPorCategoria(Long idCategoria,UUID idUsuario){
-        //Teste de retorno
+
         List<Questao> listaDados = questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario);
         for(Questao d: listaDados){
-            System.out.println(d.getId()+" | nova questao:"+novaQuestao(d)+" | habilitada revisão:"+habilitadaParaRevisao(d)+" | Duracao dias: "+d.getEtapa().getDuracaoDias());
+            if(d.getEtapa() != null && d.getDataCriacao()!=null) {
+                LocalDateTime dataInicio = d.getDataCriacao();
+                Long diasEtapa  = (long) d.getEtapa().getDuracaoDias();
+                LocalDateTime proximaRevisao = dataInicio.plusDays(diasEtapa);
+                System.out.println(d.getId() + " | nova questao:" + novaQuestao(d) + " | habilitada revisão:" + habilitadaParaRevisao(d) + " | Duracao dias: " + d.getEtapa().getDuracaoDias()+" | proxima :"+proximaRevisao);
+            }
         }
         return questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)
                 .stream()
@@ -141,6 +160,7 @@ public class QuestaoService {
 
 
     public void remover(Long idQuestao, Long idCategoria, UUID idUsuario) {
+
         Questao questao = questaoRepository.findByIdAndCategoriaIdAndCategoriaUsuarioId(idQuestao,idCategoria,idUsuario);
         if (questao==null) throw new ResourceNotFound("Questão não encontrada!");
         questaoRepository.delete(questao);

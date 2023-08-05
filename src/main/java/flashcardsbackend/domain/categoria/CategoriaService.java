@@ -23,15 +23,12 @@ public class CategoriaService {
 
     public DadosCategoria criar(DadosCategoria dados){
         Optional<Usuario> userOpt = usuarioRepository.findById(dados.usuarioId());
-        System.out.println("pre do método");
         if (userOpt.isPresent()) {
-            System.out.println("inicio do método");
              Categoria categoria =  new Categoria();
              categoria.setNome(dados.nome());
              categoria.setUsuario(userOpt.get());
              Categoria categoriaResponse =  categoriaRepository.save(categoria);
              DadosCategoria dadosResponse = new DadosCategoria(categoriaResponse);
-             System.out.println("fim do método");
              return dadosResponse;
         }
         else{
@@ -42,6 +39,7 @@ public class CategoriaService {
 
     @Transactional
     public DadosCategoria atualizar(DadosCategoria dto) {
+
         Optional<Usuario> userOpt = usuarioRepository.findById(dto.usuarioId());
         if (dto.id()==null) throw new ResourceNotFound("Id de categoria é obrigatório");
         if (userOpt.isPresent()){
@@ -61,16 +59,12 @@ public class CategoriaService {
 
     public List<DadosCategoria> listarCategorias(UUID idUsuario) {
         List<Categoria> listaCategoria = categoriaRepository.findByUsuarioId(idUsuario);
-        //System.out.println(listaCategoria.toString());
         return listaCategoria.stream().map(e->new DadosCategoria(e)).collect(Collectors.toList());
     }
 
     public void removerCategoria(Long id,UUID idUsuario) {
         Optional<Categoria> categoriaOptional = categoriaRepository.findById(id);
-
         if (categoriaOptional.isPresent()) {
-            System.out.println(categoriaOptional.get().getUsuario().getId());
-            System.out.println(idUsuario);
             if (!idUsuario.equals(categoriaOptional.get().getUsuario().getId()))
                 throw new ResourceNotFound("Usuário não encontrado");
             categoriaRepository.delete(categoriaOptional.get());

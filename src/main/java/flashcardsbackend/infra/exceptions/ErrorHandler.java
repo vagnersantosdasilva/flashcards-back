@@ -50,6 +50,11 @@ public class ErrorHandler {
                 .body(new DadosErros(ex.getMessage()));
     }
 
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity tokenException(TokenException ex){
+        return ResponseEntity.badRequest().body(new DadosErros(ex.getMessage()));
+    }
+
     private record DadosErroValidacao(String field, String message) {
         public DadosErroValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());
