@@ -1,0 +1,3 @@
+ALTER TABLE questoes
+MODIFY pergunta VARCHAR(500),
+MODIFY resposta VARCHAR(500);
