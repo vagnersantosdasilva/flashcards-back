@@ -2,6 +2,7 @@ package flashcardsbackend.domain.questao;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
 
@@ -10,9 +11,9 @@ public record DadosQuestao(
         @NotNull
         Long categoriaId,
 
-        @NotBlank
+        @NotBlank @Size(max = 255 , message = "Máximo de 255 caracteres")
         String pergunta,
-        @NotBlank
+        @NotBlank @Size(max = 255, message = "Máximo de 255 caracteres")
         String resposta,
 
         Boolean acerto,

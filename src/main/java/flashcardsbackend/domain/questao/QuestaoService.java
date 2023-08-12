@@ -29,12 +29,7 @@ public class QuestaoService {
     UsuarioRepository usuarioRepository;
     @Transactional
     public DadosQuestao criar(DadosQuestao dto, UUID idUsuario){
-        try {
-            Thread.sleep(1000); // 2 segundos em milissegundos
-        } catch (InterruptedException e) {
-            // Tratamento de exceção, caso a thread seja interrompida enquanto dorme.
-            e.printStackTrace();
-        }
+
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Questao questao = new Questao();
         questao.setAcerto(dto.acerto());
@@ -47,12 +42,6 @@ public class QuestaoService {
     }
 
     public DadosQuestao atualizar(DadosQuestaoUpdate dto, UUID idUsuario) {
-        try {
-            Thread.sleep(1000); // 2 segundos em milissegundos
-        } catch (InterruptedException e) {
-            // Tratamento de exceção, caso a thread seja interrompida enquanto dorme.
-            e.printStackTrace();
-        }
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Optional<Questao> questaoOpt =  questaoRepository.findById(dto.id());
         if (questaoOpt.isEmpty()) throw new ResourceNotFound("Questão não encontrada!");
@@ -63,6 +52,7 @@ public class QuestaoService {
         questao.setResposta(dto.resposta());
         questao.setEtapa(Etapa.ETAPA0);
         questao.setAcerto(null);
+        questao.setDataCriacao(questaoOpt.get().getDataCriacao());
         return new DadosQuestao(questaoRepository.save(questao));
     }
 
