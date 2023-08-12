@@ -11,9 +11,9 @@ public record DadosQuestao(
         @NotNull
         Long categoriaId,
 
-        @NotBlank @Size(max = 255 , message = "Máximo de 255 caracteres")
+        @NotBlank @Size(max = 500 , message = "Máximo de 500 caracteres")
         String pergunta,
-        @NotBlank @Size(max = 255, message = "Máximo de 255 caracteres")
+        @NotBlank @Size(max = 500, message = "Máximo de 500 caracteres")
         String resposta,
 
         Boolean acerto,
