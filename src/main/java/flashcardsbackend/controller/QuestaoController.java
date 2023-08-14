@@ -99,4 +99,13 @@ public class QuestaoController {
             @PathVariable("idUsuario") UUID idUsuario){
         return ResponseEntity.ok(service.obterQuestaoParaRevisao(idCategoria,idUsuario));
     }
+
+    @GetMapping("usuario/{idUsuario}/categoria/{idCategoria}/questao/datas")
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    public ResponseEntity obterDatasDeNovasRevisoes(
+            @PathVariable("idUsuario")UUID idUsuario,
+            @PathVariable("idCategoria") Long idCategoria
+    ){
+        return ResponseEntity.ok(service.obterDataRevisaoPorCategoria(idCategoria));
+    }
 }

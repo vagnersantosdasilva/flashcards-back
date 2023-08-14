@@ -160,4 +160,8 @@ public class QuestaoService {
         return new DadosContagem(questaoRepository.countByEtapa0AndCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario));
     }
 
+    public List<Object> obterDataRevisaoPorCategoria(Long idCategoria) {
+        List<Object> lista = questaoRepository.getDataRevisaoPorCategoria(idCategoria);
+        return lista;
+    }
 }
