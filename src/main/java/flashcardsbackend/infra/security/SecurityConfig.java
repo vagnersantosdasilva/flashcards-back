@@ -1,6 +1,7 @@
 package flashcardsbackend.infra.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,7 +24,8 @@ import org.springframework.web.filter.CorsFilter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
 public class SecurityConfig {
-
+    @Value("${frontend.uri}")
+    private String frontend;
     @Autowired
     SecurityFilter securityFilter;
 
@@ -31,7 +33,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin("http://localhost:8080");
+        corsConfiguration.addAllowedOrigin(frontend);
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
 
