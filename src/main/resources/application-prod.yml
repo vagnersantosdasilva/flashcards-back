@@ -3,11 +3,11 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost/flashcards
-    username: estudo
+    url: ${BD_URL}
+    username: ${BD_USERNAME}
     password: ${BD_SECRET}
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -17,7 +17,7 @@ spring:
       mail:
         smtp:
           ssl:
-            trust: smtp.gmail.com
+            trust: ${SMTP}
       smtp:
         auth: true
         starttls:
@@ -28,8 +28,8 @@ spring:
         port: 465
         class: javax.net.ssl.SSLSocketFactory
       fallback: false
-    host: smtp.gmail.com
-    username: vagnersantosdasilva@gmail.com
+    host: ${SMTP}
+    username: ${USR_SMTP}
     password: ${SMTP_SECRET}
     port: 465
     protocol: smtps
@@ -37,19 +37,12 @@ spring:
 
 
 default:
-  sender: vagnersantosdasilva@gmail.com
-  recipient: vagnersantosdasilva@gmail.com
-  url: http://localhost:8082
+  sender: ${USR_SMTP}
+  recipient: ${USR_SMTP}
+  url: ${URL_BACK}
 
 
 frontend:
-  uri: http://localhost:8080
+  uri: ${URL_FRONT}
 
-
-
-api:
-  security:
-    token:
-      secret: ${JWT_SECRET}
-      issuer: VSS Flashcards
 
