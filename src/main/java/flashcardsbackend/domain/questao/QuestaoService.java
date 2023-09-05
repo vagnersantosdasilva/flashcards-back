@@ -3,6 +3,7 @@ package flashcardsbackend.domain.questao;
 import flashcardsbackend.domain.categoria.Categoria;
 import flashcardsbackend.domain.categoria.CategoriaRepository;
 import flashcardsbackend.domain.categoria.DadosCategoria;
+import flashcardsbackend.domain.questao.Validation.ValidacaoHtml;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,8 +29,14 @@ public class QuestaoService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    List<ValidacaoHtml> validacoes = new ArrayList<>();
     @Transactional
     public DadosQuestao criar(DadosQuestao dto, UUID idUsuario){
+
+        validacoes.forEach(v-> v.validar(dto.pergunta(),"Pergunta"));
+        validacoes.forEach(v-> v.validar(dto.resposta(),"Resposta"));
 
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Questao questao = new Questao();
@@ -42,6 +50,10 @@ public class QuestaoService {
     }
 
     public DadosQuestao atualizar(DadosQuestaoUpdate dto, UUID idUsuario) {
+
+        validacoes.forEach(v-> v.validar(dto.pergunta(),"Pergunta"));
+        validacoes.forEach(v-> v.validar(dto.resposta(),"Resposta"));
+
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Optional<Questao> questaoOpt =  questaoRepository.findById(dto.id());
         if (questaoOpt.isEmpty()) throw new ResourceNotFound("Questão não encontrada!");
@@ -82,11 +94,6 @@ public class QuestaoService {
 
     }
 
-    public List<Questao> obterRevisaoPorCategoria(Long idCategoria){
-
-        return null;
-    }
-
     private Boolean habilitadaParaRevisao(Questao questao){
         LocalDateTime criacao = questao.getDataCriacao();
         Long diasEtapa  = (long) questao.getEtapa().getDuracaoDias();
@@ -110,13 +117,6 @@ public class QuestaoService {
         if (questao!=null) return new DadosQuestao(questao);
         throw new ResourceNotFound("Questão não encontrada!");
     }
-
-   /* public List<DadosQuestao> obterNovasQuestoes(Long idCategoria,UUID idUsuario){
-        return questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)
-                .stream()
-                .filter(e->novaQuestao(e))
-                .map(e->new DadosQuestao(e)).collect(Collectors.toList());
-    }*/
 
     public List<DadosQuestao> obterQuestaoParaRevisao(Long idCategoria, UUID idUsuario){
         return  questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)

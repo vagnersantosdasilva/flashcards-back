@@ -9,9 +9,9 @@ public record DadosQuestaoUpdate(@NotNull
                                  Long id,
                                  @NotNull
                                  Long categoriaId,
-                                 @NotBlank
+                                 @NotBlank(message="Campo Pergunta não pode ser vazio")
                                  String pergunta,
-                                 @NotBlank
+                                 @NotBlank(message="Campo Resposta não pode ser vazio")
                                  String resposta,
                                  Boolean acerto,
                                  @NotNull

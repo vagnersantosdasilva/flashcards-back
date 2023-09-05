@@ -11,9 +11,9 @@ public record DadosQuestao(
         @NotNull
         Long categoriaId,
 
-        @NotBlank @Size(max = 500 , message = "Máximo de 500 caracteres")
+        @NotBlank ( message = "Campo Pergunta não pode ser vazio")
         String pergunta,
-        @NotBlank @Size(max = 500, message = "Máximo de 500 caracteres")
+        @NotBlank ( message = "Campo Resposta não pode ser vazio")
         String resposta,
 
         Boolean acerto,
