@@ -61,7 +61,7 @@ public abstract class AbstractEmailService implements EmailService {
 
     protected String htmlFromTemplateUser(Usuario user, String vToken,Integer confirmacao) throws UnsupportedEncodingException {
         String encodedToken = URLEncoder.encode(vToken, StandardCharsets.UTF_8.toString());
-        String confirmationUrl = this.contextPath + "/api/public/usuario?token="+encodedToken;
+        String confirmationUrl = this.contextPath.replace(":5000","") + "/api/public/usuario?token="+encodedToken;
         //String resetUrl = this.frontend+"/reset?token="+encodedToken;
         String resetUrl = this.frontend;
         Context context = new Context();
