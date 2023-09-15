@@ -79,8 +79,13 @@ public class UsuarioService {
     public void habilitarResetPassword(String email) throws RuntimeException {
         Optional<Usuario> user = usuarioRepository.findByUsername(email);
         if (user.isPresent()){
-            var token = tokenService.gerarToken(user.get());
-            emailService.sendConfirmationHtmlEmail(user.get(),token, Constants.EMAIL_CONFIRMACAO_RESET_PASSWORD);
+            var newPassword = createPassword();
+            Usuario usuario = user.get();
+            usuario.setPassword(encoder.encode(createPassword()));
+            usuario.setEnabled(true);
+            usuarioRepository.save(usuario);
+            //var token = tokenService.gerarToken(user.get());
+            emailService.sendConfirmationHtmlEmail(usuario,newPassword, Constants.EMAIL_CONFIRMACAO_RESET_PASSWORD);
         }
         else throw new UserNotFound("Usuário não encontrado!");
     }
@@ -95,5 +100,16 @@ public class UsuarioService {
             usuario.setEnabled(true);
         }
         else throw new UserNotFound("Usuário não encontrado!");
+    }
+
+    private String createPassword(){
+        return "#F1a2c5h4";
+    }
+    @Transactional
+    private Usuario resetPasswordPublic(Usuario user, String newPassword){
+
+        user.setPassword(encoder.encode(newPassword));
+        user.setEnabled(true);
+        return user;
     }
 }

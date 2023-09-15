@@ -45,8 +45,7 @@ default:
 
 
 frontend:
-  uri: http://localhost:8080
-
+  uri: https://localhost
 
 
 api:

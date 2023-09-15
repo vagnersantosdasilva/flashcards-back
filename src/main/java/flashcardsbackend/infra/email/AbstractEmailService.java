@@ -53,7 +53,7 @@ public abstract class AbstractEmailService implements EmailService {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
         mimeMessageHelper.setTo(user.getUsername());
         mimeMessageHelper.setFrom(this.sender);
-        mimeMessageHelper.setSubject("Simples Flashcards");
+        mimeMessageHelper.setSubject("Memo Beam");
         mimeMessageHelper.setSentDate(new Date((System.currentTimeMillis())));
         mimeMessageHelper.setText(htmlFromTemplateUser(user,vToken,confirmacao), true);
         return mimeMessage;
@@ -62,9 +62,11 @@ public abstract class AbstractEmailService implements EmailService {
     protected String htmlFromTemplateUser(Usuario user, String vToken,Integer confirmacao) throws UnsupportedEncodingException {
         String encodedToken = URLEncoder.encode(vToken, StandardCharsets.UTF_8.toString());
         String confirmationUrl = this.contextPath + "/api/public/usuario?token="+encodedToken;
-        String resetUrl = this.frontend+"/reset?token="+encodedToken;
+        //String resetUrl = this.frontend+"/reset?token="+encodedToken;
+        String resetUrl = this.frontend;
         Context context = new Context();
         context.setVariable("user", user);
+        context.setVariable("password",vToken);
         if (confirmacao.equals(Constants.EMAIL_CONFIRMACAO_CADASTRO_USUARIO)){
             context.setVariable("confirmationUrl", confirmationUrl);
             return templateEngine.process("email/registerUser", context);
