@@ -60,7 +60,7 @@ public class UsuarioController {
     public ResponseEntity registro(@RequestParam("token") String token){
         System.out.println(token);
         DadosUsuarioResponseDTO dadosResponse = usuarioService.validarCriacao(token);
-        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create(frontendUri+"/login")).build();
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create(frontendUri)).build();
 
     }
 
