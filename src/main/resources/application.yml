@@ -15,37 +15,29 @@ spring:
     defaultSchema: flashcards
 
   mail:
+    host: smtp-relay.sendinblue.com
+    port: 587
+    username: vgrssdasilva@gmail.com
+    password: ${SMTP_SECRET}
     properties:
       mail:
         smtp:
+          auth: true
+          starttls:
+            enable: true
           ssl:
-            trust: smtp.gmail.com
-      smtp:
-        auth: true
-        starttls:
-          enable: true
-        ssl:
-          enable: true
-      socketFactory:
-        port: 465
-        class: javax.net.ssl.SSLSocketFactory
-      fallback: false
-    host: smtp.gmail.com
-    username: vagnersantosdasilva@gmail.com
-    password: ${SMTP_SECRET}
-    port: 465
-    protocol: smtps
+            trust: smtp-relay.sendinblue.com
 
 
 
 default:
-  sender: vagnersantosdasilva@gmail.com
-  recipient: vagnersantosdasilva@gmail.com
+  sender: no-reply@memobeam.com.br
+  recipient: vgrssdasilva@gmail.com
   url: http://localhost:8082
 
 
 frontend:
-  uri: https://localhost
+  uri: http://localhost:8080
 
 
 api:

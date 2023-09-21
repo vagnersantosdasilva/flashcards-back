@@ -35,8 +35,7 @@ public class UsuarioController {
     @Autowired
     TokenService tokenService;
 
-    @Value("${frontend.uri}")
-    private String frontendUri;
+
 
     @PostMapping("public/usuario")
     public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioCriacao dados , UriComponentsBuilder uriBuilder){
@@ -59,8 +58,8 @@ public class UsuarioController {
     @GetMapping("/public/usuario")
     public ResponseEntity registro(@RequestParam("token") String token){
         System.out.println(token);
-        DadosUsuarioResponseDTO dadosResponse = usuarioService.validarCriacao(token);
-        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create(frontendUri)).build();
+        String urlResponse = usuarioService.validarCriacao(token);
+        return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create(urlResponse)).build();
 
     }
 

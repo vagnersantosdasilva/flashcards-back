@@ -11,6 +11,7 @@ import flashcardsbackend.infra.exceptions.UserNotFound;
 import flashcardsbackend.infra.exceptions.ValidPasswordException;
 import flashcardsbackend.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +37,9 @@ public class UsuarioService {
 
     @Autowired
     TokenService tokenService;
+
+    @Value("${frontend.uri}")
+    private String frontendUri;
 
     @Transactional
     public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioCriacao dados){
@@ -61,13 +66,15 @@ public class UsuarioService {
         return new DadosUsuarioResponseDTO(usuario);
     }
     @Transactional
-    public DadosUsuarioResponseDTO validarCriacao(String token) {
+    public String validarCriacao(String token) {
         //TODO: Obter usuario de token usando um novo service para extrair informacao
         String username = tokenService.getSubject(token);
         Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(username);
         if (usuarioOpt.isPresent()) {
             usuarioOpt.get().setEnabled(true);
-            return new DadosUsuarioResponseDTO(usuarioOpt.get());
+            String tokenResponse = tokenService.gerarToken(usuarioOpt.get());
+            String urlResponse = frontendUri+"/?token="+tokenResponse;
+            return urlResponse;
         }
         else throw new UserNotFound("Usuario não encontrado");
     }
@@ -81,7 +88,7 @@ public class UsuarioService {
         if (user.isPresent()){
             var newPassword = createPassword();
             Usuario usuario = user.get();
-            usuario.setPassword(encoder.encode(createPassword()));
+            usuario.setPassword(encoder.encode(newPassword));
             usuario.setEnabled(true);
             usuarioRepository.save(usuario);
             //var token = tokenService.gerarToken(user.get());
@@ -103,7 +110,16 @@ public class UsuarioService {
     }
 
     private String createPassword(){
-        return "#F1a2c5h4";
+        String caracteres = "*!Aa@BbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789#$%";
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < 9; i++) {
+            int index = random.nextInt(caracteres.length());
+            password.append(caracteres.charAt(index));
+        }
+
+        return password.toString();
     }
     @Transactional
     private Usuario resetPasswordPublic(Usuario user, String newPassword){

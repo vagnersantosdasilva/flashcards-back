@@ -13,31 +13,21 @@ spring:
         format_sql: true
 
   mail:
+    host: ${SMTP}
+    port: 587
+    username: ${SMTP_USER}
+    password: ${SMTP_SECRET}
     properties:
       mail:
         smtp:
+          auth: true
+          starttls:
+            enable: true
           ssl:
             trust: ${SMTP}
-      smtp:
-        auth: true
-        starttls:
-          enable: true
-        ssl:
-          enable: true
-      socketFactory:
-        port: 465
-        class: javax.net.ssl.SSLSocketFactory
-      fallback: false
-    host: ${SMTP}
-    username: ${USR_SMTP}
-    password: ${SMTP_SECRET}
-    port: 465
-    protocol: smtps
-
-
 
 default:
-  sender: ${USR_SMTP}
+  sender: ${SMTP_SENDER}
   recipient: ${USR_SMTP}
   url: ${URL_BACK}
 
