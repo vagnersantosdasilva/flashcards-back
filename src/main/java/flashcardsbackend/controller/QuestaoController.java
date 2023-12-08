@@ -108,4 +108,13 @@ public class QuestaoController {
     ){
         return ResponseEntity.ok(service.obterDataRevisaoPorCategoria(idCategoria));
     }
+
+    @GetMapping("usuario/{idUsuario}/categoria/{idCategoria}/download")
+    public ResponseEntity donwloadCategoria(
+            @PathVariable("idUsuario") UUID idUsuario,
+            @PathVariable("idCategoria") Long idCategoria){
+        List<DadosQuestao> listaQuestao =  service.obterQuestaoPorCategoria(idCategoria,idUsuario);
+        return ResponseEntity.ok().body(listaQuestao);
+    }
+
 }
