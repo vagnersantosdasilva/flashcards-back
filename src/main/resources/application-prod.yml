@@ -2,6 +2,22 @@ server:
   port: 5000
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_ID}
+            clientSecret: ${GITHUB_SECRET}
+            redirectUri: ${GITHUB_REDIRECT_URI}
+          google:
+            clientId: ${GOOGLE_ID}
+            clientSecret: ${GOOGLE_SECRET}
+          facebook:
+            clientId: ${FACEBOOK_ID}
+            clientSecret: ${FACEBOOK_SECRET}
+            scope:
+              - public_profile
   datasource:
     url: ${BD_URL}
     username: ${BD_USERNAME}

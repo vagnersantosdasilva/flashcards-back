@@ -17,8 +17,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -29,31 +32,45 @@ public class SecurityConfig {
     @Autowired
     SecurityFilter securityFilter;
 
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin(frontend);
+        corsConfiguration.setAllowedOrigins(List.of(frontend));
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
-
         return new CorsFilter(source);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http
+                .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeHttpRequests()
-                .requestMatchers(HttpMethod.POST, "/api/public/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
-                .requestMatchers("/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()
-                .anyRequest().authenticated()
-                .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(corsFilter(), SecurityFilter.class)
+                .and()
+                .authorizeHttpRequests()
+                    .requestMatchers(HttpMethod.POST, "/api/public/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/public/**").permitAll()
+                    .requestMatchers("/oauth2/authorization/**").permitAll()
+                    .requestMatchers("/login/**","/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(corsFilter(), SecurityFilter.class)
+                .logout()
+                    .logoutUrl("/logout")  // URL de logout
+                    .logoutSuccessUrl(frontend)  // URL para redirecionar após o logout bem-sucedido
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                .and()
+                .oauth2Login(oauth2->{
+                    oauth2.loginPage("/login");
+                    oauth2.successHandler(oAuth2LoginSuccessHandler);
+                })
                 .build();
     }
 
@@ -62,9 +79,6 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
 }

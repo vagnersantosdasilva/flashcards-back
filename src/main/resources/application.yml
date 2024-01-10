@@ -2,6 +2,22 @@ server:
   port: 8082
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_ID}
+            clientSecret: ${GITHUB_SECRET}
+            redirectUri: ${GITHUB_REDIRECT_URI}
+          google:
+            clientId: ${GOOGLE_ID}
+            clientSecret: ${GOOGLE_SECRET}
+          facebook:
+            clientId: ${FACEBOOK_ID}
+            clientSecret: ${FACEBOOK_SECRET}
+            scope:
+              - public_profile
   datasource:
     url: jdbc:mysql://localhost/flashcards
     username: estudo
@@ -28,21 +44,16 @@ spring:
           ssl:
             trust: smtp-relay.sendinblue.com
 
-
-
 default:
   sender: no-reply@memobeam.com.br
   recipient: vgrssdasilva@gmail.com
   url: http://localhost:8082
 
-
 frontend:
   uri: http://localhost:8080
-
 
 api:
   security:
     token:
       secret: ${JWT_SECRET}
       issuer: VSS Flashcards
-

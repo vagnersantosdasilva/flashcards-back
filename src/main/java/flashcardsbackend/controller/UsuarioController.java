@@ -1,16 +1,12 @@
 package flashcardsbackend.controller;
 
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioCriacao;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioLoginDTO;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioResetPasswordDTO;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioResponseDTO;
+import flashcardsbackend.domain.usuario.dto.*;
 import flashcardsbackend.domain.usuario.Usuario;
 import flashcardsbackend.domain.usuario.UsuarioService;
 import flashcardsbackend.infra.security.DadosTokenResponse;
 import flashcardsbackend.infra.security.TokenService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +15,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 @RestController
@@ -60,7 +58,6 @@ public class UsuarioController {
         System.out.println(token);
         String urlResponse = usuarioService.validarCriacao(token);
         return ResponseEntity.status(HttpStatus.SEE_OTHER).location(URI.create(urlResponse)).build();
-
     }
 
     @GetMapping("/public/reset/usuario")

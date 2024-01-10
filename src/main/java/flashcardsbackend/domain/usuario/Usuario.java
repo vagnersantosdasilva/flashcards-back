@@ -25,17 +25,34 @@ public class Usuario implements UserDetails {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "uuid", updatable = false)
-    private UUID id;
+    protected UUID id;
 
-    private String username;
+    protected String username;
 
     @JsonIgnore
-    private String password;
+    protected String password;
 
     @Column(name = "enabled")
-    private Boolean enabled;
+    protected Boolean enabled;
+
+    @Column(name="social")
+    protected Boolean social;
+
+    @Column(name="id_social")
+    protected String idSocial;
+
+    @Column(name="provedor")
+    protected String provedor;
 
     Usuario(){}
+
+    public Usuario(String username, Boolean enabled, Boolean social, String provedor, String idSocial ){
+        this.username = username;
+        this.enabled = enabled;
+        this.social = social;
+        this.provedor = provedor;
+        this.idSocial = idSocial;
+    }
 
     public Usuario(String username, String password){
         this.username =username;

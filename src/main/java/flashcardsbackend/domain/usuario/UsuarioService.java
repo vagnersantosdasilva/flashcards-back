@@ -1,9 +1,6 @@
 package flashcardsbackend.domain.usuario;
 
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioCriacao;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioLoginDTO;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioResetPasswordDTO;
-import flashcardsbackend.domain.usuario.dto.DadosUsuarioResponseDTO;
+import flashcardsbackend.domain.usuario.dto.*;
 import flashcardsbackend.infra.email.Constants;
 import flashcardsbackend.infra.email.EmailService;
 import flashcardsbackend.infra.exceptions.DuplicateUser;
@@ -12,6 +9,7 @@ import flashcardsbackend.infra.exceptions.ValidPasswordException;
 import flashcardsbackend.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,16 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.UUID;
-
 @Service
 public class UsuarioService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
-
     @Autowired
     PasswordEncoder encoder;
 
@@ -51,9 +49,6 @@ public class UsuarioService {
         Usuario usuario = new Usuario(dados.username(), encoder.encode(dados.password()));
         usuario.setEnabled(false);
         Usuario response = usuarioRepository.save(usuario);
-
-        System.out.println("Senha gerada : "+response.getPassword());
-        //TODO: Chamar serviço de entrega de email
 
         var token = tokenService.gerarToken(usuario);
         emailService.sendConfirmationHtmlEmail(usuario,token, Constants.EMAIL_CONFIRMACAO_CADASTRO_USUARIO);
@@ -127,5 +122,23 @@ public class UsuarioService {
         user.setPassword(encoder.encode(newPassword));
         user.setEnabled(true);
         return user;
+    }
+
+
+    public DadosUsuarioSocialResponseDTO criarUsuarioSocial(DadosUsuarioSocialCriacao dadosUsuarioCriacao) throws GeneralSecurityException, IOException {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(dadosUsuarioCriacao.username());
+        if(usuarioOpt.isEmpty()) {
+            Usuario newUser = new Usuario(dadosUsuarioCriacao.username(),true,true,dadosUsuarioCriacao.provedor(),dadosUsuarioCriacao.idSocial());
+            newUser.setPassword(encoder.encode(createPassword()));
+            Usuario userResponse = usuarioRepository.save(newUser);
+            var tokenResponse = tokenService.gerarToken(newUser);
+            return new DadosUsuarioSocialResponseDTO(userResponse,tokenResponse);
+        }
+        var tokenResponse  = tokenService.gerarToken(usuarioOpt.get());
+        return new DadosUsuarioSocialResponseDTO(usuarioOpt.get(),tokenResponse);
+    }
+
+    public Optional<Usuario> findByIdSocial(String idSocial){
+        return usuarioRepository.findByIdSocial(idSocial);
     }
 }
