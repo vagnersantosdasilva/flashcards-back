@@ -24,16 +24,15 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class UsuarioController {
 
+    private UsuarioService usuarioService;
+    private AuthenticationManager manager;
+    private TokenService tokenService;
     @Autowired
-    UsuarioService usuarioService;
-
-    @Autowired
-    AuthenticationManager manager;
-
-    @Autowired
-    TokenService tokenService;
-
-
+    UsuarioController(UsuarioService usuarioService, AuthenticationManager manager, TokenService tokenService){
+        this.usuarioService = usuarioService;
+        this.manager = manager;
+        this.tokenService = tokenService;
+    }
 
     @PostMapping("public/usuario")
     public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioCriacao dados , UriComponentsBuilder uriBuilder){

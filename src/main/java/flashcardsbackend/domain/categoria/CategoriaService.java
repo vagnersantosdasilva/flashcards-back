@@ -1,5 +1,7 @@
 package flashcardsbackend.domain.categoria;
 
+import flashcardsbackend.domain.categoria.utils.Contador;
+import flashcardsbackend.domain.categoria.utils.ContadorComparator;
 import flashcardsbackend.domain.usuario.Usuario;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
@@ -8,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,4 +81,72 @@ public class CategoriaService {
         }
         throw new ResourceNotFound("Categoria não encontrada!");
     }
+    public List<Dashboard> obterDashboard(UUID idUsuario){
+        return convertList(categoriaRepository.getCountEtapaByCategoria(idUsuario));
+    }
+
+    private  List<Dashboard> convertList(List<ContagemEtapaDTO> originalList) {
+        Map<Long, Dashboard> idToContagemMap = new HashMap<>();
+
+        for (ContagemEtapaDTO item : originalList) {
+            Long id =  item.getId();
+            String etapa = item.getEtapa();
+            Integer quantidade = item.getQuantidade();
+            String nome = item.getNome();
+
+            Dashboard contagem = idToContagemMap.computeIfAbsent(id,
+                    k -> new Dashboard(id, nome, null, null, null, null, null, null));
+
+            switch (etapa) {
+                case "ETAPA0" -> contagem.setEtapa0(quantidade);
+                case "ETAPA1" -> contagem.setEtapa1(quantidade);
+                case "ETAPA2" -> contagem.setEtapa2(quantidade);
+                case "ETAPA3" -> contagem.setEtapa3(quantidade);
+                case "ETAPA4" -> contagem.setEtapa4(quantidade);
+                case "ETAPA5" -> contagem.setEtapa5(quantidade);
+                case "ETAPA6" -> contagem.setEtapa6(quantidade);
+            }
+            idToContagemMap.put(id, contagem);
+
+        }
+        idToContagemMap.values().forEach(e -> {
+            setNivel(e);
+            setTotalQuestoes(e);
+        });
+        /*List<Dashboard> novaLista = new ArrayList<>(idToContagemMap.values());
+        return novaLista.stream().map(e-> setTotalQuestoes(e)).collect(Collectors.toList());*/
+        return new ArrayList<>(idToContagemMap.values());
+    }
+
+    private Dashboard setNivel(Dashboard contagem){
+        Contador c0 = new Contador("Iniciante",contagem.getEtapa0()==null?0:contagem.getEtapa0());
+        Contador c1 = new Contador("Iniciante",contagem.getEtapa1()==null?0:contagem.getEtapa1());
+        Contador c2 = new Contador("Iniciante",contagem.getEtapa2()==null?0:contagem.getEtapa2());
+        Contador c3 = new Contador("Básico",contagem.getEtapa3()==null?0:contagem.getEtapa3());
+        Contador c4 = new Contador("Básico",contagem.getEtapa4()==null?0:contagem.getEtapa4());
+        Contador c5 = new Contador("Avançado",contagem.getEtapa5()==null?0:contagem.getEtapa5());
+        Contador c6 = new Contador("Fluente",contagem.getEtapa6()==null?0:contagem.getEtapa6());
+        List<Contador> listaContadores = new ArrayList<>(Arrays.asList(c0, c1, c2, c3, c4, c5, c6));
+        listaContadores.sort(new ContadorComparator());
+        Contador maiorContador = listaContadores.get(listaContadores.size() - 1);
+        contagem.setNivel(maiorContador.getDescricao());
+        return contagem;
+    }
+
+    private Dashboard setTotalQuestoes(Dashboard contagem) {
+        int total = 0;
+        if (contagem.getTotalQuestoes()!=null ) total = contagem.getTotalQuestoes();
+
+        if (contagem.getEtapa0()!=null) total+=contagem.getEtapa0().intValue();
+        if (contagem.getEtapa1()!=null) total+=contagem.getEtapa1().intValue();
+        if (contagem.getEtapa2()!=null) total+=contagem.getEtapa2().intValue();
+        if (contagem.getEtapa3()!=null) total+=contagem.getEtapa3().intValue();
+        if (contagem.getEtapa4()!=null) total+=contagem.getEtapa4().intValue();
+        if (contagem.getEtapa5()!=null) total+=contagem.getEtapa5().intValue();
+        if (contagem.getEtapa6()!=null) total+=contagem.getEtapa6().intValue();
+        contagem.setTotalQuestoes(total);
+        return  contagem;
+    }
+
+
 }

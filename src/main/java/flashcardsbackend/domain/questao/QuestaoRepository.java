@@ -56,4 +56,5 @@ public interface QuestaoRepository extends JpaRepository<Questao,Long> {
             "    END < CURDATE()" +
             "    GROUP BY nova_data   ")
     List<Object> getDataRevisaoPorCategoriaPendentes(Long idCategoria);
+
 }

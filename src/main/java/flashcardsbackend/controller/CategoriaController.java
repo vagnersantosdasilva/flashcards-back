@@ -4,14 +4,12 @@ import flashcardsbackend.domain.categoria.CategoriaService;
 import flashcardsbackend.domain.categoria.DadosCategoria;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -61,5 +59,12 @@ public class CategoriaController {
         DadosCategoria categoriaResponse = categoriaService.obterCategoria(idCategoria);
         return ResponseEntity.ok().body(categoriaResponse);
     }
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    @GetMapping("/usuario/{idUsuario}/categoria/etapas")
+    public ResponseEntity listarContagemEtapasPorCategoria(@PathVariable UUID idUsuario ){
+        return ResponseEntity.ok().body(categoriaService.obterDashboard(idUsuario));
+    }
+
+
 
 }
