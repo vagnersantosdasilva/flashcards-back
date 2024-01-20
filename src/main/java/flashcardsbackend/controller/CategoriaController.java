@@ -2,6 +2,7 @@ package flashcardsbackend.controller;
 
 import flashcardsbackend.domain.categoria.CategoriaService;
 import flashcardsbackend.domain.categoria.DadosCategoria;
+import flashcardsbackend.domain.relatorios.TentativaEtapaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,9 @@ import java.util.UUID;
 public class CategoriaController {
     @Autowired
     CategoriaService categoriaService;
+
+    @Autowired
+    TentativaEtapaService tentativaEtapaService;
     @PostMapping("categoria")
     @PreAuthorize("#dados.usuarioId.toString().equals(authentication.principal.get().id.toString())")
     public ResponseEntity criarCategoria(
@@ -65,6 +69,9 @@ public class CategoriaController {
         return ResponseEntity.ok().body(categoriaService.obterDashboard(idUsuario));
     }
 
-
-
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    @GetMapping("/usuario/{idUsuario}/categoria/{idCategoria}/acertos")
+    public ResponseEntity listarContagemEtapasPorCategoria(@PathVariable UUID idUsuario, @PathVariable Long idCategoria ){
+        return ResponseEntity.ok().body(tentativaEtapaService.getListAcertoEtapaPorCategoria(idUsuario,idCategoria));
+    }
 }

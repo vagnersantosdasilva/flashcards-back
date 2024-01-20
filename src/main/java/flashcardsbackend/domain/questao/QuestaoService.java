@@ -4,6 +4,8 @@ import flashcardsbackend.domain.categoria.Categoria;
 import flashcardsbackend.domain.categoria.CategoriaRepository;
 import flashcardsbackend.domain.categoria.DadosCategoria;
 import flashcardsbackend.domain.questao.Validation.ValidacaoHtml;
+import flashcardsbackend.domain.relatorios.TentativaEtapa;
+import flashcardsbackend.domain.relatorios.TentativaEtapaRepository;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class QuestaoService {
 
     @Autowired
     QuestaoRepository questaoRepository;
+
+    @Autowired
+    TentativaEtapaRepository tentativaEtapaRepository;
     @Autowired
     CategoriaRepository categoriaRepository;
 
@@ -78,6 +83,15 @@ public class QuestaoService {
         questao.setEtapa(etapa);
         questao.setDataCriacao(LocalDateTime.now());
         questaoRepository.save(questao);
+
+        TentativaEtapa tentativaEtapa = new TentativaEtapa();
+        tentativaEtapa.setAcerto(dto.acerto());
+        tentativaEtapa.setDataTentativa(questaoOpt.get().getDataCriacao());
+        tentativaEtapa.setEtapa(questaoOpt.get().getEtapa().getDescricao());
+        tentativaEtapa.setCategoria(categoria);
+        tentativaEtapa.setUsuario(usuarioRepository.getReferenceById(idUsuario));
+        tentativaEtapaRepository.save(tentativaEtapa);
+
     }
 
     private Etapa verificarEtapa(Questao questao) {
