@@ -1,5 +1,8 @@
 package flashcardsbackend.domain.categoria;
 
+import flashcardsbackend.domain.categoria.dto.ContagemEtapaDTO;
+import flashcardsbackend.domain.categoria.dto.DadosCategoria;
+import flashcardsbackend.domain.categoria.dto.DashboardCategoria;
 import flashcardsbackend.domain.categoria.utils.Contador;
 import flashcardsbackend.domain.categoria.utils.ContadorComparator;
 import flashcardsbackend.domain.usuario.Usuario;
@@ -81,12 +84,12 @@ public class CategoriaService {
         }
         throw new ResourceNotFound("Categoria não encontrada!");
     }
-    public List<Dashboard> obterDashboard(UUID idUsuario){
+    public List<DashboardCategoria> obterDashboard(UUID idUsuario){
         return convertList(categoriaRepository.getCountEtapaByCategoria(idUsuario));
     }
 
-    private  List<Dashboard> convertList(List<ContagemEtapaDTO> originalList) {
-        Map<Long, Dashboard> idToContagemMap = new HashMap<>();
+    private  List<DashboardCategoria> convertList(List<ContagemEtapaDTO> originalList) {
+        Map<Long, DashboardCategoria> idToContagemMap = new HashMap<>();
 
         for (ContagemEtapaDTO item : originalList) {
             Long id =  item.getId();
@@ -94,8 +97,8 @@ public class CategoriaService {
             Integer quantidade = item.getQuantidade();
             String nome = item.getNome();
 
-            Dashboard contagem = idToContagemMap.computeIfAbsent(id,
-                    k -> new Dashboard(id, nome, null, null, null, null, null, null));
+            DashboardCategoria contagem = idToContagemMap.computeIfAbsent(id,
+                    k -> new DashboardCategoria(id, nome, null, null, null, null, null, null));
 
             switch (etapa) {
                 case "ETAPA0" -> contagem.setEtapa0(quantidade);
@@ -118,14 +121,14 @@ public class CategoriaService {
         return new ArrayList<>(idToContagemMap.values());
     }
 
-    private Dashboard setNivel(Dashboard contagem){
-        Contador c0 = new Contador("Iniciante",contagem.getEtapa0()==null?0:contagem.getEtapa0());
-        Contador c1 = new Contador("Iniciante",contagem.getEtapa1()==null?0:contagem.getEtapa1());
-        Contador c2 = new Contador("Iniciante",contagem.getEtapa2()==null?0:contagem.getEtapa2());
-        Contador c3 = new Contador("Básico",contagem.getEtapa3()==null?0:contagem.getEtapa3());
-        Contador c4 = new Contador("Básico",contagem.getEtapa4()==null?0:contagem.getEtapa4());
-        Contador c5 = new Contador("Avançado",contagem.getEtapa5()==null?0:contagem.getEtapa5());
-        Contador c6 = new Contador("Fluente",contagem.getEtapa6()==null?0:contagem.getEtapa6());
+    private DashboardCategoria setNivel(DashboardCategoria contagem){
+        Contador c0 = new Contador("Iniciante",contagem.getEtapa0()==null?0:contagem.getEtapa0()*7);
+        Contador c1 = new Contador("Iniciante",contagem.getEtapa1()==null?0:contagem.getEtapa1()*7);
+        Contador c2 = new Contador("Básico",contagem.getEtapa2()==null?0:contagem.getEtapa2()*6);
+        Contador c3 = new Contador("Básico",contagem.getEtapa3()==null?0:contagem.getEtapa3()*6);
+        Contador c4 = new Contador("Intermediário",contagem.getEtapa4()==null?0:contagem.getEtapa4()*5);
+        Contador c5 = new Contador("Avançado",contagem.getEtapa5()==null?0:contagem.getEtapa5()*4);
+        Contador c6 = new Contador("Fluente",contagem.getEtapa6()==null?0:contagem.getEtapa6()*3);
         List<Contador> listaContadores = new ArrayList<>(Arrays.asList(c0, c1, c2, c3, c4, c5, c6));
         listaContadores.sort(new ContadorComparator());
         Contador maiorContador = listaContadores.get(listaContadores.size() - 1);
@@ -133,7 +136,7 @@ public class CategoriaService {
         return contagem;
     }
 
-    private Dashboard setTotalQuestoes(Dashboard contagem) {
+    private DashboardCategoria setTotalQuestoes(DashboardCategoria contagem) {
         int total = 0;
         if (contagem.getTotalQuestoes()!=null ) total = contagem.getTotalQuestoes();
 

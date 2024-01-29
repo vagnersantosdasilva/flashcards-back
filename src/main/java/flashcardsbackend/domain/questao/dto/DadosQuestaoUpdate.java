@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.questao;
+package flashcardsbackend.domain.questao.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

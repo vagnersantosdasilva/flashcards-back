@@ -2,8 +2,11 @@ package flashcardsbackend.domain.questao;
 
 import flashcardsbackend.domain.categoria.Categoria;
 import flashcardsbackend.domain.categoria.CategoriaRepository;
-import flashcardsbackend.domain.categoria.DadosCategoria;
-import flashcardsbackend.domain.questao.Validation.ValidacaoHtml;
+import flashcardsbackend.domain.questao.validation.ValidacaoHtml;
+import flashcardsbackend.domain.questao.dto.DadosContagem;
+import flashcardsbackend.domain.questao.dto.DadosQuestao;
+import flashcardsbackend.domain.questao.dto.DadosQuestaoResposta;
+import flashcardsbackend.domain.questao.dto.DadosQuestaoUpdate;
 import flashcardsbackend.domain.relatorios.TentativaEtapa;
 import flashcardsbackend.domain.relatorios.TentativaEtapaRepository;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
@@ -12,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,25 +74,25 @@ public class QuestaoService {
         return new DadosQuestao(questaoRepository.save(questao));
     }
 
-    public void responderPergunta(DadosQuestaoResposta dto,UUID idUsuario){
+    public void responderPergunta(DadosQuestaoResposta dto, UUID idUsuario){
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Optional<Questao> questaoOpt =  questaoRepository.findById(dto.id());
         if (questaoOpt.isEmpty()) throw new ResourceNotFound("Questão não encontrada!");
+
+        TentativaEtapa tentativaEtapa = new TentativaEtapa();
+        tentativaEtapa.setAcerto(dto.acerto());
+        tentativaEtapa.setDataTentativa(questaoOpt.get().getDataCriacao());
+        tentativaEtapa.setEtapa(questaoOpt.get().getEtapa().getDescricao()=="Etapa 0"?"Etapa 1":questaoOpt.get().getEtapa().getDescricao());
+        tentativaEtapa.setCategoria(categoria);
+        tentativaEtapa.setUsuario(usuarioRepository.getReferenceById(idUsuario));
+        tentativaEtapaRepository.save(tentativaEtapa);
+
         Questao questao = questaoOpt.get();
         questao.setAcerto(dto.acerto());
         Etapa etapa = this.verificarEtapa(questao);
         questao.setEtapa(etapa);
         questao.setDataCriacao(LocalDateTime.now());
         questaoRepository.save(questao);
-
-        TentativaEtapa tentativaEtapa = new TentativaEtapa();
-        tentativaEtapa.setAcerto(dto.acerto());
-        tentativaEtapa.setDataTentativa(questaoOpt.get().getDataCriacao());
-        tentativaEtapa.setEtapa(questaoOpt.get().getEtapa().getDescricao());
-        tentativaEtapa.setCategoria(categoria);
-        tentativaEtapa.setUsuario(usuarioRepository.getReferenceById(idUsuario));
-        tentativaEtapaRepository.save(tentativaEtapa);
-
     }
 
     private Etapa verificarEtapa(Questao questao) {
@@ -109,7 +110,7 @@ public class QuestaoService {
     }
 
     private Boolean habilitadaParaRevisao(Questao questao){
-        LocalDateTime criacao = questao.getDataCriacao();
+        /*LocalDateTime criacao = questao.getDataCriacao();
         Long diasEtapa  = (long) questao.getEtapa().getDuracaoDias();
         LocalDateTime proximaRevisao = criacao.plusDays(diasEtapa);
 
@@ -117,7 +118,8 @@ public class QuestaoService {
         LocalDate.now();
 
         if ((dataRevisao.isBefore(LocalDate.now()) || dataRevisao.equals(LocalDate.now()))) return true;
-        return false;
+        return false;*/
+        return true;
     }
 
     private Boolean novaQuestao(Questao questao){

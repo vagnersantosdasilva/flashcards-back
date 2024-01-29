@@ -1,5 +1,6 @@
-package flashcardsbackend.domain.categoria;
+package flashcardsbackend.domain.categoria.dto;
 
+import flashcardsbackend.domain.categoria.Categoria;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

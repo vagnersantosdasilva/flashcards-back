@@ -1,7 +1,7 @@
 package flashcardsbackend.controller;
 
 import flashcardsbackend.domain.categoria.CategoriaService;
-import flashcardsbackend.domain.categoria.DadosCategoria;
+import flashcardsbackend.domain.categoria.dto.DadosCategoria;
 import flashcardsbackend.domain.relatorios.TentativaEtapaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

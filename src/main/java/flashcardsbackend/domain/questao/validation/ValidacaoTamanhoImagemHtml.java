@@ -1,7 +1,6 @@
-package flashcardsbackend.domain.questao.Validation;
+package flashcardsbackend.domain.questao.validation;
 
 import flashcardsbackend.infra.exceptions.Validation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;

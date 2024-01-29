@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.categoria;
+package flashcardsbackend.domain.categoria.dto;
 
 import lombok.Data;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Data
 @Setter
 @Getter
-public class Dashboard {
+public class DashboardCategoria {
 
         private Long idCategoria;
         private String nomeCategoria;
@@ -21,7 +21,7 @@ public class Dashboard {
         private Integer totalQuestoes = 0;
         private String nivel = "INICIANTE";
 
-        public Dashboard(Long idCategoria, String nomeCategoria, Integer etapa1, Integer etapa2, Integer etapa3, Integer etapa4, Integer etapa5, Integer etapa6) {
+        public DashboardCategoria(Long idCategoria, String nomeCategoria, Integer etapa1, Integer etapa2, Integer etapa3, Integer etapa4, Integer etapa5, Integer etapa6) {
                 this.idCategoria = idCategoria;
                 this.nomeCategoria = nomeCategoria;
                 this.etapa1 = etapa1;

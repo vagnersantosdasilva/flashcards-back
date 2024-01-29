@@ -1,5 +1,6 @@
 package flashcardsbackend.domain.categoria;
 
+import flashcardsbackend.domain.categoria.dto.ContagemEtapaDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.questao.Validation;
+package flashcardsbackend.domain.questao.validation;
 
 import flashcardsbackend.infra.exceptions.Validation;
 import org.springframework.stereotype.Component;

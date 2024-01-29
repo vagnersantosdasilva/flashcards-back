@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.questao;
+package flashcardsbackend.domain.questao.dto;
 
 public record DadosContagem(Long contagem) {
 }

@@ -1,8 +1,8 @@
 package flashcardsbackend.controller;
 
-import flashcardsbackend.domain.questao.DadosQuestao;
-import flashcardsbackend.domain.questao.DadosQuestaoResposta;
-import flashcardsbackend.domain.questao.DadosQuestaoUpdate;
+import flashcardsbackend.domain.questao.dto.DadosQuestao;
+import flashcardsbackend.domain.questao.dto.DadosQuestaoResposta;
+import flashcardsbackend.domain.questao.dto.DadosQuestaoUpdate;
 import flashcardsbackend.domain.questao.QuestaoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package flashcardsbackend.domain.categoria;
+package flashcardsbackend.domain.categoria.dto;
 
 
 public interface ContagemEtapaDTO {
