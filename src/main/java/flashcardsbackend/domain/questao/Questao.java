@@ -31,6 +31,5 @@ public class Questao {
     @Enumerated(EnumType.STRING)
     private Etapa etapa;
 
-    @OneToMany
-    private List<TentativaEtapa> tentativaEtapa;
+
 }

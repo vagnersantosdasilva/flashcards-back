@@ -2,6 +2,7 @@ package flashcardsbackend.domain.categoria;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import flashcardsbackend.domain.questao.Questao;
+import flashcardsbackend.domain.relatorios.TentativaEtapa;
 import flashcardsbackend.domain.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -24,6 +25,10 @@ public class Categoria {
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Questao> questoes;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.REMOVE)
+    private List<TentativaEtapa> tentativasEtapas;
 
     @ManyToOne()
     private Usuario usuario;

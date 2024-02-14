@@ -35,7 +35,7 @@ public class UsuarioController {
     }
 
     @PostMapping("public/usuario")
-    public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioCriacao dados , UriComponentsBuilder uriBuilder){
+    public ResponseEntity criarNovoUsuario(@RequestBody @Valid DadosUsuarioCriacao dados , UriComponentsBuilder uriBuilder) throws InterruptedException {
         DadosUsuarioResponseDTO dadosResponse = usuarioService.criarUsuario(dados);
         var uri = uriBuilder.path("/usuario/{id}").buildAndExpand(dadosResponse.id()).toUri();
         return ResponseEntity.created(uri).body(dadosResponse);

@@ -40,9 +40,8 @@ public class UsuarioService {
     private String frontendUri;
 
     @Transactional
-    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioCriacao dados){
+    public DadosUsuarioResponseDTO criarUsuario(DadosUsuarioCriacao dados) throws InterruptedException {
         Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(dados.username());
-
         if(usuarioOptional.isPresent()) throw new DuplicateUser("Usuário já cadastrado!");
         if (!dados.password().equals(dados.confirmPassword())) throw new ValidPasswordException("Campos Password e confirmPassword devem ser iguais!");
 

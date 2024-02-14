@@ -13,9 +13,11 @@ spring:
           google:
             clientId: ${GOOGLE_ID}
             clientSecret: ${GOOGLE_SECRET}
+            redirectUri: ${GOOGLE_REDIRECT_URI}
           facebook:
             clientId: ${FACEBOOK_ID}
             clientSecret: ${FACEBOOK_SECRET}
+            redirectUri: ${FACEBOOK_REDIRECT_URI}
             scope:
               - public_profile
   datasource:

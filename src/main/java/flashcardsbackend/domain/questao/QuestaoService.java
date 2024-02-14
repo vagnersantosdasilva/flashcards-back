@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,7 @@ public class QuestaoService {
     }
 
     private Boolean habilitadaParaRevisao(Questao questao){
-        /*LocalDateTime criacao = questao.getDataCriacao();
+        LocalDateTime criacao = questao.getDataCriacao();
         Long diasEtapa  = (long) questao.getEtapa().getDuracaoDias();
         LocalDateTime proximaRevisao = criacao.plusDays(diasEtapa);
 
@@ -118,8 +119,7 @@ public class QuestaoService {
         LocalDate.now();
 
         if ((dataRevisao.isBefore(LocalDate.now()) || dataRevisao.equals(LocalDate.now()))) return true;
-        return false;*/
-        return true;
+        return false;
     }
 
     private Boolean novaQuestao(Questao questao){
