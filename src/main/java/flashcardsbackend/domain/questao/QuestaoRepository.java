@@ -29,6 +29,7 @@ public interface QuestaoRepository extends JpaRepository<Questao,Long> {
             "    END AS nova_data\n" +
             "FROM flashcards.questoes\n" +
             "WHERE categoria_id = ? \n" +
+            "AND acerto is not null \n"+
             "GROUP BY nova_data   ")
     List<Object> getDataRevisaoPorCategoria(Long idCategoria);
 
