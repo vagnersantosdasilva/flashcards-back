@@ -43,9 +43,16 @@ spring:
             enable: true
           ssl:
             trust: smtp-relay.sendinblue.com
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+
 
 default:
-  sender: no-reply@memobeam.com.br
+  sender: no-reply@memobeam.site
   recipient: vgrssdasilva@gmail.com
   url: http://localhost:8082
 

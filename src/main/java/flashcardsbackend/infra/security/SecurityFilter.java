@@ -6,6 +6,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,20 +21,23 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
     @Override
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //TODO:Pegar o token no header e validar para seguir com a requisição!
 
-        var tokenJWT  = recuperarToken(request);
+            var tokenJWT  = recuperarToken(request);
 
-        if (tokenJWT!=null){
-            var subject = tokenService.getSubject(tokenJWT);
-            var usuario = usuarioRepository.findByUsername(subject);
+            if (tokenJWT!=null){
+                var subject = tokenService.getSubject(tokenJWT);
+                var usuario = usuarioRepository.findByUsername(subject);
 
-            var authentication = new UsernamePasswordAuthenticationToken(usuario,null,usuario.get().getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        filterChain.doFilter(request,response);
+                var authentication = new UsernamePasswordAuthenticationToken(usuario,null,usuario.get().getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request,response);
+
     }
 
     private String recuperarToken(HttpServletRequest request) {

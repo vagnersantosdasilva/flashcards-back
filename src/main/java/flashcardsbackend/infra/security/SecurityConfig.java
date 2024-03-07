@@ -1,26 +1,31 @@
 package flashcardsbackend.infra.security;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import flashcardsbackend.infra.exceptions.TokenException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
+
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
+import org.springframework.security.core.AuthenticationException;
 import java.util.List;
 
 @EnableWebSecurity
@@ -58,20 +63,23 @@ public class SecurityConfig {
                     .requestMatchers("/oauth2/authorization/**").permitAll()
                     .requestMatchers("/login/**","/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()
                     .anyRequest().authenticated()
-                    .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                    .and()
+                    .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                     .addFilterBefore(corsFilter(), SecurityFilter.class)
                 .logout()
-                    .logoutUrl("/logout")  // URL de logout
-                    .logoutSuccessUrl(frontend)  // URL para redirecionar após o logout bem-sucedido
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl(frontend)
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
                 .and()
                 .oauth2Login(oauth2->{
-                    oauth2.loginPage("/login");
                     oauth2.successHandler(oAuth2LoginSuccessHandler);
                 })
-                .build();
+                .exceptionHandling( )
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and().build();
+
     }
 
     @Bean

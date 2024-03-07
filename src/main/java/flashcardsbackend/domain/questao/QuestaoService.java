@@ -111,6 +111,7 @@ public class QuestaoService {
     }
 
     private Boolean habilitadaParaRevisao(Questao questao){
+
         LocalDateTime criacao = questao.getDataCriacao();
         Long diasEtapa  = (long) questao.getEtapa().getDuracaoDias();
         LocalDateTime proximaRevisao = criacao.plusDays(diasEtapa);
@@ -149,7 +150,7 @@ public class QuestaoService {
                 LocalDateTime dataInicio = d.getDataCriacao();
                 Long diasEtapa  = (long) d.getEtapa().getDuracaoDias();
                 LocalDateTime proximaRevisao = dataInicio.plusDays(diasEtapa);
-                System.out.println(d.getId() + " | nova questao:" + novaQuestao(d) + " | habilitada revisão:" + habilitadaParaRevisao(d) + " | Duracao dias: " + d.getEtapa().getDuracaoDias()+" | proxima :"+proximaRevisao);
+                //System.out.println(d.getId() + " | nova questao:" + novaQuestao(d) + " | habilitada revisão:" + habilitadaParaRevisao(d) + " | Duracao dias: " + d.getEtapa().getDuracaoDias()+" | proxima :"+proximaRevisao);
             }
         }
         return questaoRepository.findAllByCategoriaIdAndCategoriaUsuarioId(idCategoria,idUsuario)

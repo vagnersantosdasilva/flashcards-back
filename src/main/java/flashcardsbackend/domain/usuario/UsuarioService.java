@@ -96,7 +96,7 @@ public class UsuarioService {
         Optional<Usuario> user = usuarioRepository.findByUsername(dadosDTO.username());
         if (user.isPresent()){
             Usuario usuario = user.get();
-            System.out.println(user.get().getUsername());
+            //System.out.println(user.get().getUsername());
             usuario.setPassword(encoder.encode(dadosDTO.password()));
             usuario.setEnabled(true);
         }

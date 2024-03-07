@@ -1,18 +1,24 @@
 package flashcardsbackend.infra.exceptions;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
+@ControllerAdvice
 public class ErrorHandler {
-
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler({EntityNotFoundException.class, NoHandlerFoundException.class})
     public ResponseEntity tratarErro404() {
         return ResponseEntity.notFound().build();
     }
@@ -51,8 +57,11 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(TokenException.class)
+    @ResponseBody
     public ResponseEntity tokenException(TokenException ex){
-        return ResponseEntity.badRequest().body(new DadosErros(ex.getMessage()));
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new DadosErros(ex.getMessage()));
     }
 
     @ExceptionHandler(Validation.class)
