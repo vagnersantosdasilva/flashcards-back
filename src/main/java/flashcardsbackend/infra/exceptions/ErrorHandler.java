@@ -74,6 +74,11 @@ public class ErrorHandler {
         return ResponseEntity.internalServerError().body(new DadosErros(e.getMessage()));
     }
 
+    @ExceptionHandler(DuplicateCategoria.class)
+    public ResponseEntity erroDuplicateCategoria(DuplicateCategoria e){
+        return ResponseEntity.badRequest().body(new DadosErros(e.getMessage()));
+    }
+
     private record DadosErroValidacao(String field, String message) {
         public DadosErroValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());

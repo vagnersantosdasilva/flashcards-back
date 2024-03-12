@@ -7,6 +7,7 @@ import flashcardsbackend.domain.categoria.utils.Contador;
 import flashcardsbackend.domain.categoria.utils.ContadorComparator;
 import flashcardsbackend.domain.usuario.Usuario;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
+import flashcardsbackend.infra.exceptions.DuplicateCategoria;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
 import flashcardsbackend.infra.exceptions.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class CategoriaService {
              Categoria categoria =  new Categoria();
              categoria.setNome(dados.nome());
              categoria.setUsuario(userOpt.get());
+             Optional <Categoria> categoriaCheck = categoriaRepository.findByNomeAndUsuarioId(dados.nome(),userOpt.get().getId());
+             if (categoriaCheck.isPresent()) throw new DuplicateCategoria("Categoria já existe");
              Categoria categoriaResponse =  categoriaRepository.save(categoria);
              DadosCategoria dadosResponse = new DadosCategoria(categoriaResponse);
              return dadosResponse;

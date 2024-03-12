@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria,Long> {
     List<Categoria> findByUsuarioId(UUID idUsuario);
 
-
+    Optional<Categoria> findByNomeAndUsuarioId(String nome, UUID usuarioId);
     @Query(nativeQuery = true,value="SELECT etapa, count(etapa) FROM flashcards.questoes where categoria_id = :idCategoria  group by etapa")
     List<Object> getCountEtapaByCategory(Long idCategoria);
 
