@@ -87,6 +87,14 @@ public class CategoriaService {
         }
         throw new ResourceNotFound("Categoria não encontrada!");
     }
+
+    public DadosCategoria obterCategoria( UUID idUsuario, String nome) {
+        Optional<Categoria> categoriaOptional = categoriaRepository.findByNomeAndUsuarioId(nome, idUsuario);
+        if (categoriaOptional.isPresent()){
+            return new DadosCategoria(categoriaOptional.get());
+        }
+        return new DadosCategoria(null, null, null);
+    }
     public List<DashboardCategoria> obterDashboard(UUID idUsuario){
         return convertList(categoriaRepository.getCountEtapaByCategoria(idUsuario));
     }

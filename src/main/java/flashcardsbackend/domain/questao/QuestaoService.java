@@ -10,8 +10,10 @@ import flashcardsbackend.domain.questao.dto.DadosQuestaoUpdate;
 import flashcardsbackend.domain.relatorios.TentativaEtapa;
 import flashcardsbackend.domain.relatorios.TentativaEtapaRepository;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
+import flashcardsbackend.infra.exceptions.LimiteQuestoes;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestaoService {
-
+    @Value("${dominio.regra.limite-questoes}")
+    private Integer limitQuestoes;
     @Autowired
     QuestaoRepository questaoRepository;
 
@@ -44,7 +47,8 @@ public class QuestaoService {
 
         validacoes.forEach(v-> v.validar(dto.pergunta(),"Pergunta"));
         validacoes.forEach(v-> v.validar(dto.resposta(),"Resposta"));
-
+        Integer contagem = questaoRepository.getCountQuestaoByUsuario(idUsuario);
+        if (contagem >= limitQuestoes) throw new LimiteQuestoes("A quantidade máxima de questões foi atingida!");
         Categoria categoria = obterCategoriaValidada(dto.categoriaId(),idUsuario);
         Questao questao = new Questao();
         questao.setAcerto(dto.acerto());

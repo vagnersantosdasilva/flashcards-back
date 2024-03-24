@@ -79,6 +79,10 @@ public class ErrorHandler {
         return ResponseEntity.badRequest().body(new DadosErros(e.getMessage()));
     }
 
+    @ExceptionHandler(LimiteQuestoes.class)
+    public ResponseEntity erroLimiteQuestoesAtingido(LimiteQuestoes e){
+        return ResponseEntity.badRequest().body(new DadosErros((e.getMessage())));
+    }
     private record DadosErroValidacao(String field, String message) {
         public DadosErroValidacao(FieldError erro) {
             this(erro.getField(), erro.getDefaultMessage());

@@ -64,3 +64,7 @@ api:
     token:
       secret: ${JWT_SECRET}
       issuer: VSS Flashcards
+
+dominio:
+  regra:
+    limite-questoes: ${LIMIT_DE_FLASHCARDS}

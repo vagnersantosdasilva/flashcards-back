@@ -58,4 +58,11 @@ public interface QuestaoRepository extends JpaRepository<Questao,Long> {
             "    GROUP BY nova_data   ")
     List<Object> getDataRevisaoPorCategoriaPendentes(Long idCategoria);
 
+    @Query(nativeQuery = true, value = "SELECT COUNT(q.id) \n" +
+            "FROM flashcards.usuarios u \n" +
+            "JOIN flashcards.categorias c ON BIN_TO_UUID(u.id) = BIN_TO_UUID(c.usuario_id) \n" +
+            "JOIN flashcards.questoes q ON q.categoria_id = c.id \n" +
+            "WHERE BIN_TO_UUID(u.id) = BIN_TO_UUID(:idUsuario)")
+    Integer getCountQuestaoByUsuario(UUID idUsuario);
+
 }
