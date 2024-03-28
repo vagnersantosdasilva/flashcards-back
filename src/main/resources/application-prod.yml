@@ -53,4 +53,6 @@ default:
 frontend:
   uri: ${URL_FRONT}
 
-
+dominio:
+  regra:
+    limite-questoes: ${LIMIT_DE_FLASHCARDS}
