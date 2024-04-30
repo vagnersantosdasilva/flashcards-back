@@ -48,8 +48,17 @@ spring:
   web:
     resources:
       add-mappings: false
-
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+# Chave da conta de serviço (JSON)
+gemini:
+  #service-account-key-path: file:./credentials.json
+  #project-id: ${GEMINI_PROJECT_ID}
+  # Audiência da API (ponto de extremidade)
+  #audience: https://aiplatform.googleapis.com/v1/projects/${GEMINI_PROJECT_ID}/locations/us-central1/models/gemini-1.0-pro:streamGenerateContent
+  key: ${GEMINI_API_KEY}
+  url: ${GEMINI_API_URL}
 
 default:
   sender: no-reply@memobeam.site

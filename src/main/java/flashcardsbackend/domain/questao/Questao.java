@@ -31,5 +31,13 @@ public class Questao {
     @Enumerated(EnumType.STRING)
     private Etapa etapa;
 
+    public Questao(Long id, String pergunta, String resposta, Boolean acerto, Etapa etapa){
+        this.id = id;
+        this.pergunta = pergunta;
+        this.resposta = resposta;
+        this.acerto = acerto;
+        this.etapa = etapa;
+    }
+    public Questao(){}
 
 }

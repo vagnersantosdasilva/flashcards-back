@@ -10,13 +10,16 @@ import flashcardsbackend.domain.questao.dto.DadosQuestaoUpdate;
 import flashcardsbackend.domain.relatorios.TentativaEtapa;
 import flashcardsbackend.domain.relatorios.TentativaEtapaRepository;
 import flashcardsbackend.domain.usuario.UsuarioRepository;
+import flashcardsbackend.infra.ai.GeminiTokenService;
 import flashcardsbackend.infra.exceptions.LimiteQuestoes;
 import flashcardsbackend.infra.exceptions.ResourceNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,6 +45,9 @@ public class QuestaoService {
 
     @Autowired
     List<ValidacaoHtml> validacoes = new ArrayList<>();
+
+    @Autowired
+    GeminiTokenService geminiTokenService;
     @Transactional
     public DadosQuestao criar(DadosQuestao dto, UUID idUsuario){
 
@@ -184,5 +190,40 @@ public class QuestaoService {
     public List<Object> obterDataRevisaoPorCategoria(Long idCategoria) {
         List<Object> lista = questaoRepository.getDataRevisaoPorCategoria(idCategoria);
         return lista;
+    }
+
+    public List<DadosQuestao> criarQuestoes(
+            UUID idUsuario,
+            Long idCategoria,
+            String lingua,
+            MultipartFile arquivo,
+            String paginas) throws IOException {
+
+
+        List<DadosQuestao> listaQuestaoRecord = geminiTokenService.generateContent(idUsuario,idCategoria,lingua, arquivo, paginas);
+        List<DadosQuestao> listaQuestaoResposta = new ArrayList<>();
+        Categoria categoria = obterCategoriaValidada(idCategoria,idUsuario);
+        for (DadosQuestao q : listaQuestaoRecord){
+            validar(q,idUsuario);
+            Questao nova = new Questao(null,
+                    "<p>"+q.pergunta().trim()+"<p>",
+                    "<p>"+q.resposta().trim()+"<p>",
+                    null ,
+                    Etapa.ETAPA0
+            );
+            nova.setAcerto(null);
+            nova.setCategoria(categoria);
+            nova.setDataCriacao(LocalDateTime.now());
+            listaQuestaoResposta.add(new DadosQuestao(questaoRepository.save(nova)));
+            //listaQuestao.add(questaoRepository.save(nova));
+        }
+        return listaQuestaoResposta;
+    }
+
+    private void validar(DadosQuestao dados, UUID idUsuario){
+        validacoes.forEach(v-> v.validar(dados.pergunta(),"Pergunta"));
+        validacoes.forEach(v-> v.validar(dados.resposta(),"Resposta"));
+        Integer contagem = questaoRepository.getCountQuestaoByUsuario(idUsuario);
+        if (contagem >= limitQuestoes) throw new LimiteQuestoes("A quantidade máxima de questões foi atingida!");
     }
 }

@@ -9,10 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -32,6 +36,19 @@ public class QuestaoController {
         var uri = uriComponentsBuilder.path("usuario/{idUsuario}/categoria/{idCategoria}/questao/{idQuestao}")
                 .buildAndExpand(idUsuario,questaoResponse.categoriaId(),questaoResponse.id()).toUri();
         return ResponseEntity.created(uri).body(questaoResponse);
+    }
+
+
+    @PostMapping("usuario/{idUsuario}/categoria/{idCategoria}/questao/texto")
+    @PreAuthorize("#idUsuario.toString().equals(authentication.principal.get().id.toString())")
+    public List<DadosQuestao> uploadFile(
+            @RequestParam MultipartFile arquivo,
+            @RequestParam String lingua,
+            @PathVariable("idCategoria") Long idCategoria ,
+            @PathVariable("idUsuario") UUID idUsuario,
+            @RequestParam("paginas") String paginas
+    ) throws IOException {
+        return (service.criarQuestoes(idUsuario, idCategoria, lingua, arquivo, paginas));
     }
 
     @PutMapping("usuario/{idUsuario}/questao")
