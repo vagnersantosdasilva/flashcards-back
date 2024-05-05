@@ -1,6 +1,7 @@
 ## Memobeam - Flashcard App with Spaced Repetition
 
-**Memobeam** é uma ferramenta de aprendizagem que auxilia você a estudar usando flashcards e revisões espaçadas. Ele permite que você crie flashcards, categorize-os e revise-os de forma otimizada, ajudando na memorização a longo prazo.
+**Memobeam** é uma ferramenta de aprendizagem que auxilia você a estudar usando flashcards e revisões espaçadas. 
+Ela permite que você crie flashcards, categorize-os e revise-os de forma otimizada, ajudando na memorização a longo prazo.
 
 ### Tecnologias utilizadas
 
@@ -29,30 +30,24 @@ cd memobeam
 ```bash
 mvn clean install
 ```
-
-**3. Configure o banco de dados**
-
-Você precisará criar um arquivo `application.properties` na raiz do projeto e configurar as credenciais de acesso ao seu banco de dados MySQL. Veja um exemplo:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/memobeam
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+**3. Build da aplicação**
+```bash
+mvn package
 ```
-
 **4. Inicie a aplicação**
-
 ```bash
 mvn spring-boot:run
+
 ```
+- Observação importante: Repare que nos arquivos de proprieade 'application.. .yml' existem diversas variáveis de ambiente 
+- Para que a aplicação funcione corretamente você deve definir esses valores no S.O que servirá de base ou no ambiente 
+de desenvolvimento que você utiliza para fazer edições.
 
 **5. Acesso à API**
 
-A API estará disponível na porta `8080` por padrão. Você pode utilizar ferramentas como Postman para testar os endpoints da API. A documentação da API estará disponível em `http://localhost:8080/swagger-ui/`.
+A API estará disponível na porta `8082` por padrão. Você pode utilizar ferramentas como Postman para testar os endpoints da API. 
+A documentação da API estará disponível em `http://localhost:8082/swagger-ui/index.html`.
 
-### Contribuindo
-
-Sinta-se à vontade para contribuir com o projeto! Abra um pull request com suas alterações e melhorias.
 
 ### Licença
 
